@@ -2,7 +2,7 @@ import time
 import BaseHTTPServer
 import serial
 
-ser = serial.Serial('/dev/ttyUSB1', 9600)
+ser = serial.Serial('/dev/ttyUSB0', 9600)
 
 PORT_NUMBER = 1337
 
@@ -21,7 +21,7 @@ class LightServer(BaseHTTPServer.BaseHTTPRequestHandler):
         s.wfile.write(line)
     else:
       s.wfile.write("Loaded %s" % s.path)
-      ser.write(s.path[1:])
+      ser.write(s.path[1:] + '\n')
 
 if __name__ == '__main__':
   server_class = BaseHTTPServer.HTTPServer

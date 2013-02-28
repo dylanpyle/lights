@@ -14,12 +14,37 @@ void setup() {
   Serial.begin(9600);
 }
 
+int rgb[3];
+int currentInt = 0;
+char incomingByte;
+
 void loop() {
   if(Serial.available() > 0){
-    char buffer[] = {' ',' ',' '};
-    Serial.readBytesUntil('$', buffer, 3);
-    Serial.println("Read something");
-    colorWipe(strip.Color(buffer[0], buffer[1], buffer[2]), 20);
+    currentInt = 0;
+    while(1){
+      incomingByte = Serial.read();
+      
+      if(incomingByte == 'R') rgb[0] = currentInt;
+      if(incomingByte == 'G') rgb[1] = currentInt;
+      if(incomingByte == 'B') rgb[2] = currentInt;
+      if(incomingByte == 'R' || incomingByte == 'G' || incomingByte == 'B'){
+        currentInt = 0;
+        continue; 
+      }
+      if(incomingByte == -1) continue;
+      if(incomingByte == '\n') break;
+        
+      
+      currentInt *= 10;
+      currentInt = ((incomingByte - 48) + currentInt);
+      
+    }
+    colorWipe(strip.Color(rgb[0], rgb[1], rgb[2]), 20);
+    Serial.println("Wiping:");
+    Serial.println(rgb[0]);
+    Serial.println(rgb[1]);
+    Serial.println(rgb[2]);
+    
   }
 }
 
