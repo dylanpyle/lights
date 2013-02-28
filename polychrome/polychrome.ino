@@ -14,43 +14,24 @@ void setup() {
   Serial.begin(9600);
 }
 
-int incomingByte = 0;
 void loop() {
-/*
-  // Send a simple pixel chase in...
-  colorChase(strip.Color(127, 127, 127), 50); // White
-  colorChase(strip.Color(127,   0,   0), 50); // Red
-  colorChase(strip.Color(127, 127,   0), 50); // Yellow
-  colorChase(strip.Color(  0, 127,   0), 50); // Green
-  colorChase(strip.Color(  0, 127, 127), 50); // Cyan
-  colorChase(strip.Color(  0,   0, 127), 50); // Blue
-  c // Violet
-
-  colorChase(strip.Color(127,   0, 127), 50); // Violet
-  // Fill the entire strip with...
-  colorWipe(strip.Color(127,   0,   0), 20);  // Red
-  colorWipe(strip.Color(  0, 127,   0), 20);  // Green
-  colorWipe(strip.Color(  0,   0, 127), 20);  // Blue
-  colorWipe(strip.Color(  127,   127, 127), 20);
-*/  
-  //rainbowCycle(0);
- // pixelHaze(20);
-
-  //rainbow(3);
   if(Serial.available() > 0){
-    incomingByte = Serial.read();
-    Serial.print("i recieved :");
-    Serial.println(incomingByte, DEC);
-    Serial.println(incomingByte == 48);
-    if(incomingByte == 48){ rainbowCycle(0); }
-    if(incomingByte == 49){ colorChase(strip.Color(  0,   0, 127), 50); }
-    if(incomingByte == 50){ colorChase(strip.Color(  127,   0, 127), 50); }
-    if(incomingByte == 51){ colorChase(strip.Color(  0,   127, 127), 50); }
-    
-    
+    char buffer[] = {' ',' ',' '};
+    Serial.readBytesUntil('$', buffer, 3);
+    Serial.println("Read something");
+    colorWipe(strip.Color(buffer[0], buffer[1], buffer[2]), 20);
   }
-
 }
+
+/*
+  A small-but-expanding collection of nice patterns. Examples:
+
+  colorChase(strip.Color(127, 127, 127), 50);
+  colorWipe(strip.Color(  127,   127, 127), 20);
+  rainbowCycle(0);
+  pixelHaze(20);
+  rainbow(0);
+*/
 
 void rainbow(uint8_t wait) {
   int i, j;
@@ -58,14 +39,12 @@ void rainbow(uint8_t wait) {
   for (j=0; j < 384; j++) {     // 3 cycles of all 384 colors in the wheel
     for (i=0; i < strip.numPixels(); i++) {
       strip.setPixelColor(i, Wheel( (i + j) % 384));
-    }  
+    }
     strip.show();   // write all the pixels out
     delay(wait);
   }
 }
 
-// Slightly different, this one makes the rainbow wheel equally distributed 
-// along the chain
 void rainbowCycle(uint8_t wait) {
   uint16_t i, j;
   
